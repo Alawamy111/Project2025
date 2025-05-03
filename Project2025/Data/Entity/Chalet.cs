@@ -8,6 +8,6 @@
         public double area { get; set; }
         public string location { get; set; }
         public Guid OwnerId { get; set; }
-      
+        public PropertyOwner PropertyOwner { get; set; } = new();
     }
 }
