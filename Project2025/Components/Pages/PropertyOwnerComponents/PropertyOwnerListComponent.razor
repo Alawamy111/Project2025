@@ -1,5 +1,36 @@
-﻿<h3>PropertyOwnerListComponent</h3>
+﻿@page "/PropertyOwnerListComponent"
+@using Project2025.Data.Entity
+@rendermode InteractiveServer
+@inject PropertyOwnerDesignServices _PropertyOwnerDesignServices
+<MudTable Items="PropertyOwners" Hover="true" Loading="@_loading" LoadingProgressColor="Color.Info">
+
+       
+    <HeaderContent>
+        <MudTh>ownerId</MudTh>
+        <MudTh>ownerName</MudTh>
+        <MudTh>email</MudTh>
+       
+
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="ownerId">@context.ownerId</MudTd>
+        <MudTd DataLabel="ownerName">@context.ownerName</MudTd>
+        <MudTd DataLabel="email">@context.email</MudTd>
+      
+    </RowTemplate>
+</MudTable>
 
 @code {
+    private bool _loading = false;
+    public List<PropertyOwner> PropertyOwners { get; set; } = new List<PropertyOwner>();
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        await Task.Delay(1000);
+        PropertyOwners = _PropertyOwnerDesignServices.GetPropertyOwners();
+        _loading = false;
 
+    }
+
+    
 }
