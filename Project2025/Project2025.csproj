@@ -17,9 +17,4 @@
     <PackageReference Include="Extensions.MudBlazor.StaticInput" Version="3.*" />
   </ItemGroup>
 
-
-  <ItemGroup>
-    <Folder Include="Components\Pages\PropertyOwnerComponents\" />
-  </ItemGroup>
-
 </Project>
