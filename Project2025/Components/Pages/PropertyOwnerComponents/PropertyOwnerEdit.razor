@@ -1,5 +1,33 @@
-﻿<h3>PropertyOwnerEdit</h3>
+﻿@page "/PropertyOwnerEdit"
+@page "/PropertyOwnerEdit/{ownerId:guid}"
+
+@using Project2025.Data.Entity
+
+
+<h3>PropertyOwnerEdit</h3>
+<MudTextField @bind-Value="PropertyOwner.ownerName" Label="ownerName" />
+<MudTextField @bind-Value="PropertyOwner.email" Label="email" />
+<MudButton Color="Color.Primary"
+           Variant="Variant.Filled" @OnClick="Save">Save</MudButton>
 
 @code {
 
+    [Parameter]
+    public Guid ownerId { get; set; }
+    private PropertyOwner PropertyOwner { get; set; } = new PropertyOwner();
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(0);
+        PropertyOwner = new PropertyOwner
+            {
+                ownerId = ownerId,
+                ownerName = "Test Name",
+            };
+    }
+    private async Task Save()
+    {
+        await Task.Delay(0);
+        Console.WriteLine($" Saved PropertyOwner: {PropertyOwner.ownerName}");
+
+    }
 }

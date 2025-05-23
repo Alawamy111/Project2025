@@ -11,7 +11,8 @@
         <MudButton Color="Color.Primary"
                    Variant="Variant.Filled"
                    StartIcon="@Icons.Material.Filled.Add"
-                   @OnClick="NavigateToPropertyOwner">Add</MudButton>
+                   onclick="NavigateToAddPropertyOwner">Add</MudButton> <!--   داله الاضافه-->
+
 
 
     </ToolBarContent>
@@ -20,7 +21,7 @@
         <MudTh>ownerName</MudTh>
         <MudTh>email</MudTh>
         <MudTh> Operations</MudTh>
-       
+
 
     </HeaderContent>
     <RowTemplate>
@@ -30,11 +31,12 @@
         <MudTd>
             <MudButton Color="Color.Primary"
                        Variant="Variant.Filled"
-                       StartIcon="@Icons.Material.Filled.Edit" />
+                       StartIcon="@Icons.Material.Filled.Edit" onclick="NavigateToAddPropertyOwner">Edit</MudButton>
 
             <MudButton Color="Color.Error"
                        Variant="Variant.Filled"
-                       StartIcon="@Icons.Material.Filled.Delete" />
+                       StartIcon="@Icons.Material.Filled.Delete"
+                       OnClick="()=> DeletePropertyOwner(context)" />
 
         </MudTd>
     </RowTemplate>
@@ -52,8 +54,15 @@
 
     }
 
-    public void NavigateToPropertyOwner()
+    public void NavigateToAddPropertyOwner()
     {
-        NavigationManager.NavigateTo("");
+        NavigationManager.NavigateTo("PropertyOwnerEdit");    // الصفحة الي تصير فيها عمليه الاضافة //
+    }
+
+
+    public void DeletePropertyOwner(PropertyOwner propertyOwner)
+    {
+        PropertyOwners.Remove(propertyOwner);
+
     }
 }
