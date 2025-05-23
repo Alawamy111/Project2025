@@ -1,8 +1,10 @@
-﻿namespace Project2025.Data.Entity
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Project2025.Data.Entity
 {
     public class PropertyOwner
     {
-
+        [Key]
         public Guid ownerId { get; set; }
         public string ownerName { get; set; }
         public string email { get; set; }
