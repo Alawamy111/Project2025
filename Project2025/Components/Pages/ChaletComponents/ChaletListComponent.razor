@@ -1,0 +1,84 @@
+﻿@page "/ChaletListComponent"
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@using Project2025.Data.Entity
+<h3>ChaletListComponent</h3>
+
+<MudTable Items="Chalets" Hover="true" Loading="@_loading" LoadingProgressColor="Color.Info">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudButton Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   @* @onclick="" *@>Add</MudButton>
+
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>ChaletId</MudTh>
+        <MudTh>price</MudTh>
+        <MudTh>location</MudTh>
+        <MudTh> OwnerId</MudTh>
+
+
+    </HeaderContent>
+    <RowTemplate>
+
+        <MudTd DataLabel="ChaletId">@context.ChaletId</MudTd>
+        <MudTd DataLabel="price">@context.price</MudTd>
+        <MudTd DataLabel="location">@context.location</MudTd>
+        <MudTd DataLabel="OwnerId">@context.OwnerId</MudTd>
+        <MudTd>
+            <MudButton Color="Color.Primary"
+                       Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Edit"
+                       @* OnClick="()=>(context)" *@ />
+
+
+            <MudButton Color="Color.Error"
+                       Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Delete"
+                       @* OnClick="()=>(context)" *@ />
+
+
+        </MudTd>
+
+
+    </RowTemplate>
+</MudTable>
+
+
+@code {
+    private bool _loading = false;
+    public List<Chalet> Chalets { get; set; } = new List<Chalet>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        await Task.Delay(2000);
+        // Lands = await _ownerDesignServices.GetLands();
+        _loading = false;
+    }
+
+    public void NavigateToAddLand()
+    {
+        NavigationManager.NavigateTo("");
+    }
+    public void NavigateToEditLand(Chalet chalet)
+    {
+        NavigationManager.NavigateTo($"OwnerEdit/{chalet.ChaletId}");
+    }
+
+    public async Task DeleteOwner(Chalet chalet)
+    {
+        await _ownerDesignServices.DeleteAsync(chalet);
+        Chalets.Remove(chalet);
+        // Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        // Snackbar.Add("تم حذف صاحب العقار بنجاح", Severity.Success);
+    }
+
+}
+
+
+
+
+

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using Project2025.Components;
 using Project2025.Components.Account;
+using Project2025.Components.Pages.ChaletComponents;
 using Project2025.Components.Pages.PropertyOwnerComponents;
 using Project2025.Data;
 
@@ -22,6 +23,8 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
 builder.Services.AddScoped<IPropertyOwnerService, PropertyOwnerService>();
+builder.Services.AddScoped<IChaletServices, ChaletServices>();
+
 
 builder.Services.AddAuthentication(options =>
     {
