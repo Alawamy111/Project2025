@@ -3,6 +3,7 @@
 @inject IPropertyOwnerService _propertyOwnerServices
 @inject NavigationManager NavigationManager
 @* @inject ISnackbar Snackbar *@
+@using Project2025.Components.Pages.ChaletComponents
 @using Project2025.Data.Entity
 
 
@@ -62,8 +63,7 @@ else
 
 
 
-<h3>OwnerEdit</h3>
-
+<ChaletListComponent/>
 
 @code {
     protected MudForm? form;
