@@ -1,17 +1,19 @@
 ﻿@page "/PropertyOwnerListComponent"
 @using Project2025.Data.Entity
 @rendermode InteractiveServer
-@inject PropertyOwnerDesignServices _PropertyOwnerDesignServices
+@inject IPropertyOwnerService propertyOwnerServices
 @inject NavigationManager NavigationManager
+@inject ISnackbar snackbar
+@inject IDialogService DialogService
 <MudTable Items="PropertyOwners" Hover="true" Loading="@_loading" LoadingProgressColor="Color.Info">
 
     <ToolBarContent>
         <MudSpacer />
 
         <MudButton Color="Color.Primary"
-                   Variant="Variant.Filled"
-                   StartIcon="@Icons.Material.Filled.Add"
-                   onclick="NavigateToAddPropertyOwner">Add</MudButton> <!--   داله الاضافه-->
+        Variant="Variant.Filled"
+        StartIcon="@Icons.Material.Filled.Add"
+                   @onclick="NavigateToAddPropertyOwner">Add</MudButton> <!--   داله الاضافه-->
 
 
 
@@ -30,13 +32,13 @@
         <MudTd DataLabel="email">@context.email</MudTd>
         <MudTd>
             <MudButton Color="Color.Primary"
-                       Variant="Variant.Filled"
-                       StartIcon="@Icons.Material.Filled.Edit" onclick="NavigateToAddPropertyOwner">Edit</MudButton>
-
+            Variant="Variant.Filled"
+            StartIcon="@Icons.Material.Filled.Edit"
+                       OnClick="()=>NavigateToEditPropertyOwner(context)" />
             <MudButton Color="Color.Error"
-                       Variant="Variant.Filled"
-                       StartIcon="@Icons.Material.Filled.Delete"
-                       OnClick="()=> DeletePropertyOwner(context)" />
+            Variant="Variant.Filled"
+            StartIcon="@Icons.Material.Filled.Delete"
+            OnClick="()=> DeletePropertyOwner(context)" />
 
         </MudTd>
     </RowTemplate>
@@ -45,24 +47,39 @@
 @code {
     private bool _loading = false;
     public List<PropertyOwner> PropertyOwners { get; set; } = new List<PropertyOwner>();
-    protected override async Task OnInitializedAsync()
+    
+
+
+    protected override async Task OnInitializedAsync() 
     {
         _loading = true;
-        await Task.Delay(0);
-        PropertyOwners = _PropertyOwnerDesignServices.GetPropertyOwners();
+        await Task.Delay(2000);
+        PropertyOwners = await propertyOwnerServices.GetPropertyOwners();
         _loading = false;
-
     }
-
     public void NavigateToAddPropertyOwner()
     {
-        NavigationManager.NavigateTo("PropertyOwnerEdit");    // الصفحة الي تصير فيها عمليه الاضافة //
+        NavigationManager.NavigateTo("/PropertyOwnerEdit");
     }
 
 
-    public void DeletePropertyOwner(PropertyOwner propertyOwner)
+    public void NavigateToEditPropertyOwner(PropertyOwner propertyOwner)
     {
-        PropertyOwners.Remove(propertyOwner);
-
+        NavigationManager.NavigateTo($"PropertyOwnerEdit/{propertyOwner.ownerId}");
     }
+
+
+
+    public async Task DeletePropertyOwner(PropertyOwner propertyOwner)
+    {
+        await propertyOwnerServices.DeleteAsync(propertyOwner);
+        PropertyOwners.Remove(propertyOwner);
+      
+    }
+
+
 }
+
+
+
+

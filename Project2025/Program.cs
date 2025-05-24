@@ -20,7 +20,8 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-builder.Services.AddScoped<PropertyOwnerDesignServices>();
+
+builder.Services.AddScoped<IPropertyOwnerService, PropertyOwnerService>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -33,7 +34,6 @@ builder.Services.AddAuthentication(options =>
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options => 
 options.UseSqlServer(connectionString,
