@@ -1,0 +1,124 @@
+﻿@page "/ChaletEdit"
+@page "/ChaletEdit/{ChaletId:guid}"
+@inject IChaletServices _chaletServices
+@inject NavigationManager NavigationManager
+
+@using Project2025.Data.Entity
+
+
+@if (chalet == null)
+{
+    <div class="d-flex justify-center align-center ma-auto">
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+    </div>
+}
+else
+{
+    <MudForm Model="chalet" @ref="form">
+        <MudCard Elevation="6">
+            <MudCardHeader>
+                <MudText Typo="Typo.h5" Align="Align.Center"> @PageHeaderText</MudText>
+            </MudCardHeader>
+
+            <MudItem xs="12" md="12" lg="12">
+                <MudTextField @bind-Value="chalet.OwnerId"
+                              Label="OwnerId"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem xs="12" md="12" lg="12">
+                <MudTextField @bind-Value="chalet.location"
+                              Label="location"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12" md="12" lg="12">
+                <MudTextField @bind-Value="chalet.price"
+                              Label="price"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12" md="12" lg="12">
+                <MudTextField @bind-Value="chalet.area"
+                              Label="area"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudCardActions Class="d-flex justify-end mt-2">
+                <MudButton Variant="Variant.Outlined"
+                           CoLor="Color.Primary"
+                           @OnClick="HandLeSaveAsync">حفظ </MudButton>
+                <MudButton Variant="Variant.Filled"
+                           CoLor="Color.Primary"
+                           @OnClick="HandLeSaveAndCloseAsync">حفظ واغلاق</MudButton>
+
+            </MudCardActions>
+
+
+        </MudCard>
+
+    </MudForm>
+
+
+}
+
+
+
+
+
+
+
+@code {
+    protected MudForm? form;
+    protected bool success = false;
+    private string PageHeaderText = "اضافة  شالية جديد";
+
+
+
+    [Parameter] public Guid ChaletId { get; set; }
+    private Chalet chalet { get; set; } = new Chalet();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ChaletId == Guid.Empty)
+        {
+            PageHeaderText = "اضافة  شالية جديد";
+            chalet = new Chalet();
+
+        }
+
+        else
+        {
+            PageHeaderText = " تعديل  الشاليه";
+            chalet = await _chaletServices.GetChaletByChaletId(ChaletId);
+        }
+    }
+
+    private async Task HandLeSaveAsync()
+    {
+
+        await _chaletServices.Upsert(chalet);
+
+
+    }
+
+    private async Task HandLeSaveAndCloseAsync()
+    {
+
+        await _chaletServices.Upsert(chalet);
+
+
+
+        NavigationManager.NavigateTo("/ChaletListComponent");
+    }
+
+
+
+
+
+
+
+}

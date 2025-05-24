@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 @using Project2025.Data.Entity
+@inject IChaletServices ChaletServices
 <h3>ChaletListComponent</h3>
 
 <MudTable Items="Chalets" Hover="true" Loading="@_loading" LoadingProgressColor="Color.Info">
@@ -10,7 +11,7 @@
         <MudButton Color="Color.Primary"
                    Variant="Variant.Filled"
                    StartIcon="@Icons.Material.Filled.Add"
-                   @* @onclick="" *@>Add</MudButton>
+                   @onclick="NavigateToAddChalet">Add</MudButton>
 
     </ToolBarContent>
     <HeaderContent>
@@ -31,13 +32,13 @@
             <MudButton Color="Color.Primary"
                        Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.Edit"
-                       @* OnClick="()=>(context)" *@ />
+                       OnClick="()=>NavigateToEditChalet(context)" />
 
 
             <MudButton Color="Color.Error"
                        Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.Delete"
-                       @* OnClick="()=>(context)" *@ />
+                       OnClick="()=>DeleteChalet(context)" />
 
 
         </MudTd>
@@ -55,25 +56,24 @@
     {
         _loading = true;
         await Task.Delay(2000);
-        // Lands = await _ownerDesignServices.GetLands();
+        // Chalet = await _ownerDesignServices.GetChalet();
         _loading = false;
     }
 
-    public void NavigateToAddLand()
+    public void NavigateToAddChalet()
     {
-        NavigationManager.NavigateTo("");
+        NavigationManager.NavigateTo("ChaletEdit");
     }
-    public void NavigateToEditLand(Chalet chalet)
+    public void NavigateToEditChalet(Chalet chalet)
     {
-        NavigationManager.NavigateTo($"OwnerEdit/{chalet.ChaletId}");
+        NavigationManager.NavigateTo($"ChaletEdit/{chalet.ChaletId}");
     }
 
-    public async Task DeleteOwner(Chalet chalet)
+    public async Task DeleteChalet(Chalet chalet)
     {
-        await _ownerDesignServices.DeleteAsync(chalet);
+        await ChaletServices.DeleteAsync(chalet);
         Chalets.Remove(chalet);
-        // Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        // Snackbar.Add("تم حذف صاحب العقار بنجاح", Severity.Success);
+       
     }
 
 }
