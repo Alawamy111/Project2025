@@ -10,8 +10,7 @@ using Project2025.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add MudBlazor services
-builder.Services.AddMudServices();
+
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -24,6 +23,8 @@ builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuth
 
 builder.Services.AddScoped<IPropertyOwnerService, PropertyOwnerService>();
 builder.Services.AddScoped<IChaletServices, ChaletServices>();
+builder.Services.AddMudServices();
+
 
 
 builder.Services.AddAuthentication(options =>

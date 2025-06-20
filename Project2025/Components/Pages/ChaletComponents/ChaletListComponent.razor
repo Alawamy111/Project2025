@@ -1,9 +1,20 @@
 ﻿@page "/ChaletListComponent"
+@using Project2025.Data.Entity
+@using Project2025.Components.Pages.ChaletComponents
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
-@using Project2025.Data.Entity
 @inject IChaletServices ChaletServices
-<h3>ChaletListComponent</h3>
+@inject NavigationManager NavigationManager
+@inject ISnackbar snackbar
+@inject IDialogService DialogService
+
+
+
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+
 
 <MudTable Items="Chalets" Hover="true" Loading="@_loading" LoadingProgressColor="Color.Info">
     <ToolBarContent>
@@ -13,22 +24,38 @@
                    StartIcon="@Icons.Material.Filled.Add"
                    @onclick="NavigateToAddChalet">Add</MudButton>
 
+
+        <MudButton Color="Color.Secondary"
+                   Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.ArrowBack"
+                   @onclick="NavigateBack">القائمة الاساسية</MudButton>
+            @* رجوع *@
+           
+        
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>ChaletId</MudTh>
+        <MudTh>المالك</MudTh>     
         <MudTh>price</MudTh>
         <MudTh>location</MudTh>
-        <MudTh> OwnerId</MudTh>
+        <MudTh>area</MudTh>
 
+@*          <MudTh> OwnerId</MudTh>
+ *@ 
 
     </HeaderContent>
     <RowTemplate>
 
-        <MudTd DataLabel="ChaletId">@context.ChaletId</MudTd>
-        <MudTd DataLabel="price">@context.price</MudTd>
+@*         <MudTd DataLabel="ChaletId">@context.ChaletId</MudTd>
+ *@
+
+        <MudTd DataLabel="المالك">@context.PropertyOwner?.ownerName</MudTd>
+  <MudTd DataLabel="price">@context.price</MudTd>
         <MudTd DataLabel="location">@context.location</MudTd>
-        <MudTd DataLabel="OwnerId">@context.OwnerId</MudTd>
-        <MudTd>
+         <MudTd DataLabel="price">@context.area</MudTd>
+        
+      
+@*         <MudTd DataLabel="OwnerId">@context.OwnerId</MudTd>
+ *@        <MudTd>
             <MudButton Color="Color.Primary"
                        Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.Edit"
@@ -49,6 +76,10 @@
 
 
 @code {
+    // [CascadingParameter]
+    // public Guid Id { get; set; }
+
+    [CascadingParameter] public Guid Id { get; set; }
     private bool _loading = false;
     public List<Chalet> Chalets { get; set; } = new List<Chalet>();
 
@@ -56,22 +87,38 @@
     {
         _loading = true;
         await Task.Delay(2000);
-        // Chalet = await _ownerDesignServices.GetChalet();
+        Chalets = await ChaletServices.GetChaletsByOwnerId(Id);
         _loading = false;
     }
 
-    public void NavigateToAddChalet()
+
+    public void NavigateToAddChalet( )
     {
-        NavigationManager.NavigateTo("ChaletEdit");
+        NavigationManager.NavigateTo($"ChaletEdit/{Id}");
     }
+
+    // دالة للرجوع إلى الصفحة السابقة
+   
+       
+       
+
+        private void NavigateBack()
+        {
+           
+            NavigationManager.NavigateTo("PropertyOwnerListComponent");
+        }
+    
+
+
     public void NavigateToEditChalet(Chalet chalet)
     {
-        NavigationManager.NavigateTo($"ChaletEdit/{chalet.ChaletId}");
+NavigationManager.NavigateTo($"ChaletEdit/{chalet.OwnerId}/ChaletId/{chalet.ChaletId}");
     }
 
     public async Task DeleteChalet(Chalet chalet)
     {
         await ChaletServices.DeleteAsync(chalet);
+        snackbar.Add("🗑️ تم حذف الشاليه بنجاح", Severity.Warning);
         Chalets.Remove(chalet);
        
     }

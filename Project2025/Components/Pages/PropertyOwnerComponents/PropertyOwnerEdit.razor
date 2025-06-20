@@ -1,10 +1,13 @@
 ﻿@page "/PropertyOwnerEdit"
-@page "/PropertyOwnerEdit/{ownerId:guid}"
-@inject IPropertyOwnerService _propertyOwnerServices
-@inject NavigationManager NavigationManager
-@* @inject ISnackbar Snackbar *@
+@page "/PropertyOwnerEdit/{Id:guid}"
 @using Project2025.Components.Pages.ChaletComponents
 @using Project2025.Data.Entity
+@rendermode InteractiveServer
+@inject IPropertyOwnerService _propertyOwnerServices
+@inject NavigationManager NavigationManager
+@inject ISnackbar snackbar
+
+
 
 
 @if (propertyOwner == null)
@@ -18,101 +21,99 @@ else
     <MudForm Model="propertyOwner" @ref="form">
         <MudCard Elevation="6">
             <MudCardHeader>
-                <MudText Typo="Typo.h5" Align="Align.Center"> @PageHeaderText</MudText>
+                <MudText Typo="Typo.h5" Align="Align.Center">@PageHeaderText</MudText>
             </MudCardHeader>
 
             <MudItem xs="12" md="12" lg="12">
                 <MudTextField @bind-Value="propertyOwner.ownerName"
-                Label="Name"
-                Variant="Variant.Outlined"
-                Margin="Margin.Dense" />
+                              Label="Name"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
             </MudItem>
 
             <MudItem xs="12" md="12" lg="12">
                 <MudTextField @bind-Value="propertyOwner.email"
-                Label="email"
-                Variant="Variant.Outlined"
-                Margin="Margin.Dense" />
+                              Label="Email"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
             </MudItem>
 
             <MudItem xs="12" md="12" lg="12">
                 <MudTextField @bind-Value="propertyOwner.phone"
-                Label="phone"
-                Variant="Variant.Outlined"
-                Margin="Margin.Dense" />
+                              Label="Phone"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
             </MudItem>
 
             <MudCardActions Class="d-flex justify-end mt-2">
                 <MudButton Variant="Variant.Outlined"
-                CoLor="Color.Primary"
-                @OnClick="HandLeSaveAsync">حفظ </MudButton>
+                           Color="Color.Primary"
+                           OnClick="HandLeSaveAsync">حفظ</MudButton>
                 <MudButton Variant="Variant.Filled"
-                CoLor="Color.Primary"
-                @OnClick="HandLeSaveAndCloseAsync">حفظ واغلاق</MudButton>
+                           Color="Color.Primary"
+                           OnClick="HandLeSaveAndCloseAsync">حفظ وإغلاق</MudButton>
+
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Secondary"
+                           StartIcon="@Icons.Material.Filled.Home"
+                           OnClick="NavigateToMainPage">
+                    القائمة الرئيسية
+
+                   
+                </MudButton>
 
             </MudCardActions>
-
-
         </MudCard>
-
     </MudForm>
-
-
 }
 
-
-
-
-<ChaletListComponent/>
+@* 
+{
+    <CascadingValue Value="Id">
+        <ChaletListComponent />
+    </CascadingValue>
+} *@
 
 @code {
     protected MudForm? form;
     protected bool success = false;
-    private string PageHeaderText = "اضافة صاحب شالية جديد";
+    private string PageHeaderText = "إضافة صاحب شالية جديد";
+    bool _centered = true;
 
-
-
-    [Parameter] public Guid ownerId { get; set; }
+    [Parameter] public Guid Id { get; set; }
     private PropertyOwner propertyOwner { get; set; } = new PropertyOwner();
 
     protected override async Task OnInitializedAsync()
     {
-        if (ownerId == Guid.Empty)
+        if (Id == Guid.Empty)
         {
-            PageHeaderText = "اضافة صاحب شالية جديد";
+            PageHeaderText = "إضافة صاحب شالية جديد";
             propertyOwner = new PropertyOwner();
-
         }
-
         else
         {
-            PageHeaderText = " تعديل صاحب الشاليه";
-            propertyOwner = await _propertyOwnerServices.GetPropertyOwnerByownerId(ownerId);
+            PageHeaderText = "تعديل صاحب الشاليه";
+            propertyOwner = await _propertyOwnerServices.GetPropertyOwnerByownerId(Id);
         }
     }
 
     private async Task HandLeSaveAsync()
     {
-       
-            await _propertyOwnerServices.Upsert(propertyOwner);
-           
+        propertyOwner = await _propertyOwnerServices.Upsert(propertyOwner);
+        snackbar.Add("تم الحفظ بنجاح", Severity.Success);
 
+    }
+    private void NavigateToMainPage()
+    {
+        NavigationManager.NavigateTo("/PropertyOwnerListComponent");
     }
 
     private async Task HandLeSaveAndCloseAsync()
     {
-       
-            await _propertyOwnerServices.Upsert(propertyOwner);
+        propertyOwner = await _propertyOwnerServices.Upsert(propertyOwner);
+        snackbar.Add("تم الحفظ بنجاح", Severity.Success);
+        await Task.Delay(1000);
+        NavigationManager.NavigateTo("PropertyOwnerListComponent");
 
-        
-  
-        NavigationManager.NavigateTo("/PropertyOwnerListComponent");
     }
-
-
-
-
-
-
-
 }

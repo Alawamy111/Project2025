@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Project2025.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateIdentitySchema : Migration
+    public partial class SS : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,6 +48,20 @@ namespace Project2025.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PropertyOwners",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ownerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    phone = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PropertyOwners", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -156,6 +170,27 @@ namespace Project2025.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Chalets",
+                columns: table => new
+                {
+                    ChaletId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    price = table.Column<double>(type: "float", nullable: false),
+                    area = table.Column<double>(type: "float", nullable: false),
+                    location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Chalets", x => x.ChaletId);
+                    table.ForeignKey(
+                        name: "FK_Chalets_PropertyOwners_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "PropertyOwners",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -194,6 +229,11 @@ namespace Project2025.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Chalets_OwnerId",
+                table: "Chalets",
+                column: "OwnerId");
         }
 
         /// <inheritdoc />
@@ -215,10 +255,16 @@ namespace Project2025.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Chalets");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "PropertyOwners");
         }
     }
 }

@@ -1,0 +1,17 @@
+﻿@page "/View"
+@page "/View/{Id:guid}"
+@using Project2025.Components.Pages.ChaletComponents
+@using Project2025.Data.Entity
+@rendermode InteractiveServer
+@inject IPropertyOwnerService _propertyOwnerServices
+@inject NavigationManager NavigationManager
+@inject ISnackbar snackbar
+
+<CascadingValue Value="Id">
+    <ChaletListComponent />
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+}

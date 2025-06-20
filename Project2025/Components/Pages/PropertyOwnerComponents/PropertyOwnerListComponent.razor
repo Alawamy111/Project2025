@@ -1,86 +1,113 @@
 ﻿@page "/PropertyOwnerListComponent"
+
+@using Project2025.Components.Pages.ChaletComponents
 @using Project2025.Data.Entity
+@using Project2025.Components.Pages.PropertyOwnerComponents
 @rendermode InteractiveServer
-@inject IPropertyOwnerService propertyOwnerServices
+@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+@inject IPropertyOwnerService _propertyOwnerServices
 @inject NavigationManager NavigationManager
 @inject ISnackbar snackbar
-@inject IDialogService DialogService
+
+
+
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+
 
 <MudTable Items="PropertyOwners" Hover="true" Loading="@_loading" LoadingProgressColor="Color.Info">
-
     <ToolBarContent>
         <MudSpacer />
-
         <MudButton Color="Color.Primary"
-        Variant="Variant.Filled"
-        StartIcon="@Icons.Material.Filled.Add"
-                   @onclick="NavigateToAddPropertyOwner">Add</MudButton> <!--   داله الاضافه-->
+                   Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   @onclick="NavigateToAddPropertyOwner">
+            إضافة
+        </MudButton>
 
+         
 
 
     </ToolBarContent>
+
     <HeaderContent>
-        <MudTh>ownerId</MudTh>
-        <MudTh>ownerName</MudTh>
-        <MudTh>email</MudTh>
-        <MudTh> Operations</MudTh>
-
-
+@*         <MudTh>Id</MudTh>
+ *@        <MudTh>الاسم</MudTh>
+        <MudTh>البريد الإلكتروني</MudTh>
+        <MudTh>الهاتف</MudTh>
+        <MudTh>العمليات</MudTh>
     </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="ownerId">@context.ownerId</MudTd>
-        <MudTd DataLabel="ownerName">@context.ownerName</MudTd>
-        <MudTd DataLabel="email">@context.email</MudTd>
-        <MudTd>
-            <MudButton Color="Color.Primary"
-            Variant="Variant.Filled"
-            StartIcon="@Icons.Material.Filled.Edit"
-                       OnClick="()=>NavigateToEditPropertyOwner(context)" />
-            <MudButton Color="Color.Error"
-            Variant="Variant.Filled"
-            StartIcon="@Icons.Material.Filled.Delete"
-            OnClick="()=> DeletePropertyOwner(context)" />
 
+    <RowTemplate>
+@*          <MudTd DataLabel="Id">@context.Id</MudTd>
+ *@         <MudTd DataLabel="ownerName">@context.ownerName</MudTd>
+        <MudTd DataLabel="email">@context.email</MudTd>
+        <MudTd DataLabel="phone">@context.phone</MudTd>
+        <MudTd>
+            <MudStack Direction="Row" Spacing="1">
+                
+
+                <!-- زر تعديل -->
+                <MudButton Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.Edit"
+                           OnClick="() => NavigateToEditPropertyOwner(context)" />
+                <!-- زر عرض الشاليهات -->
+
+                <MudButton Color="Color.Info"
+                           Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.Visibility"
+                           OnClick="() => NavigateToViewPropertyOwner(context)" />
+
+                <!-- زر حذف -->
+                <MudButton Color="Color.Error"
+                           Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.Delete"
+                           OnClick="() => DeletePropertyOwner(context)" />
+            </MudStack>
         </MudTd>
     </RowTemplate>
 </MudTable>
 
 @code {
     private bool _loading = false;
-    public List<PropertyOwner> PropertyOwners { get; set; } = new List<PropertyOwner>();
-    
+    public List<PropertyOwner> PropertyOwners { get; set; } = new();
 
-
-    protected override async Task OnInitializedAsync() 
+    protected override async Task OnInitializedAsync()
     {
         _loading = true;
-        await Task.Delay(2000);
-        PropertyOwners = await propertyOwnerServices.GetPropertyOwners();
+        await Task.Delay(1000); // مجرد تمثيل لوقت التحميل
+        PropertyOwners = await _propertyOwnerServices.GetPropertyOwners();
         _loading = false;
     }
+
     public void NavigateToAddPropertyOwner()
     {
-        NavigationManager.NavigateTo("/PropertyOwnerEdit");
+        NavigationManager.NavigateTo("PropertyOwnerEdit");
     }
-
 
     public void NavigateToEditPropertyOwner(PropertyOwner propertyOwner)
     {
-        NavigationManager.NavigateTo($"PropertyOwnerEdit/{propertyOwner.ownerId}");
+        NavigationManager.NavigateTo($"PropertyOwnerEdit/{propertyOwner.Id}");
+
     }
-
-
+    
+    // دالة للرجوع إلى الصفحة السابقة
+   
+    
+    public void NavigateToViewPropertyOwner(PropertyOwner propertyOwner)
+    {
+        NavigationManager.NavigateTo($"view/{propertyOwner.Id}");
+    }
 
     public async Task DeletePropertyOwner(PropertyOwner propertyOwner)
     {
-        await propertyOwnerServices.DeleteAsync(propertyOwner);
+        await _propertyOwnerServices.DeleteAsync(propertyOwner);
+        snackbar.Add("🗑️ تم حذف صاحب العقار", Severity.Warning);
         PropertyOwners.Remove(propertyOwner);
-      
     }
 
-
 }
-
-
-
-

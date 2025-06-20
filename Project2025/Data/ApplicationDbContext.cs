@@ -6,8 +6,8 @@ namespace Project2025.Data
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
-        public DbSet<PropertyOwner> PropertyOwners { get; set; } = default!; 
-        public DbSet<Chalet> Chalets { get; set; } = default!;
+        public DbSet<PropertyOwner>PropertyOwners{ get; set; } = default!; 
+        public DbSet<Chalet>Chalets{ get; set; } = default!;
 
     }
 }

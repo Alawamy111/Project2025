@@ -1,7 +1,14 @@
 ﻿@inherits LayoutComponentBase
 <MudRTLProvider RightToLeft="true">
 <MudThemeProvider />
-<MudLayout>
+
+ <MudDialogProvider />
+    <MudSnackbarProvider MaxDisplayedSnackbars="3"
+                         PreventDuplicates="true"
+                         Position="SnackbarPosition.BottomLeft" />
+
+
+    <MudLayout>
     <MudAppBar Elevation="1">
         <MudStaticNavDrawerToggle DrawerId="nav-drawer" Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
         <MudText Typo="Typo.h5" Class="ml-3">موقع</MudText>

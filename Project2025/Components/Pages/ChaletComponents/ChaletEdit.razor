@@ -1,10 +1,15 @@
-﻿@page "/ChaletEdit"
-@page "/ChaletEdit/{ChaletId:guid}"
-@inject IChaletServices _chaletServices
-@inject NavigationManager NavigationManager
+﻿@page "/ChaletEdit/{OwnerId:guid}"
+@page "/ChaletEdit/{OwnerId:guid}/ChaletId/{ChaletId:guid}"
 
 @using Project2025.Data.Entity
-<h1>    تعديل شالية  </h1>
+@using Project2025.Components.Pages.ChaletComponents
+@rendermode InteractiveServer
+@inject IChaletServices _chaletServices
+@inject NavigationManager NavigationManager
+@inject ISnackbar snackbar
+
+
+<h1>تعديل شالية</h1>
 
 @if (chalet == null)
 {
@@ -17,15 +22,24 @@ else
     <MudForm Model="chalet" @ref="form">
         <MudCard Elevation="6">
             <MudCardHeader>
-                <MudText Typo="Typo.h5" Align="Align.Center"> @PageHeaderText</MudText>
+                <MudText Typo="Typo.h5" Align="Align.Center">@PageHeaderText</MudText>
             </MudCardHeader>
 
             <MudItem xs="12" md="12" lg="12">
                 <MudTextField @bind-Value="chalet.OwnerId"
-                              Label="OwnerId"
+                              Label="OwnerID"
                               Variant="Variant.Outlined"
                               Margin="Margin.Dense" />
             </MudItem>
+
+            <MudItem xs="12" md="12" lg="12">
+                <MudTextField @bind-Value="chalet.ChaletId"
+                              Label="ChaletID"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+
             <MudItem xs="12" md="12" lg="12">
                 <MudTextField @bind-Value="chalet.location"
                               Label="location"
@@ -49,76 +63,69 @@ else
 
             <MudCardActions Class="d-flex justify-end mt-2">
                 <MudButton Variant="Variant.Outlined"
-                           CoLor="Color.Primary"
-                           @OnClick="HandLeSaveAsync">حفظ </MudButton>
+                           Color="Color.Primary"
+                           OnClick="HandLeSaveAsync">حفظ</MudButton>
+
                 <MudButton Variant="Variant.Filled"
-                           CoLor="Color.Primary"
-                           @OnClick="HandLeSaveAndCloseAsync">حفظ واغلاق</MudButton>
+                           Color="Color.Primary"
+                           OnClick="HandLeSaveAndCloseAsync">حفظ وإغلاق</MudButton>
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Secondary"
+                           StartIcon="@Icons.Material.Filled.Home"
+                           OnClick="NavigateToMainPagee">
+                   الرجوع
 
+                   
+                </MudButton>
+              
             </MudCardActions>
-
-
         </MudCard>
-
     </MudForm>
-
-
 }
 
-
-
-
-
-
-
 @code {
+    [Parameter]
+    public Guid? OwnerId { get; set; }
+
+    [Parameter]
+    public Guid ChaletId { get; set; }
+
     protected MudForm? form;
     protected bool success = false;
-    private string PageHeaderText = "اضافة  شالية جديد";
-
-
-
-    [Parameter] public Guid ChaletId { get; set; }
+    private string PageHeaderText = "اضافة شالية جديد";
     private Chalet chalet { get; set; } = new Chalet();
 
     protected override async Task OnInitializedAsync()
     {
         if (ChaletId == Guid.Empty)
         {
-            PageHeaderText = "اضافة  شالية جديد";
+            PageHeaderText = "اضافة شالية جديد";
             chalet = new Chalet();
 
+            if (OwnerId.HasValue && OwnerId != Guid.Empty)
+                chalet.OwnerId = OwnerId.Value;
         }
-
         else
         {
-            PageHeaderText = " تعديل  الشاليه";
+            PageHeaderText = "تعديل الشاليه";
             chalet = await _chaletServices.GetChaletByChaletId(ChaletId);
         }
     }
 
     private async Task HandLeSaveAsync()
     {
-
         await _chaletServices.Upsert(chalet);
-
-
+        snackbar.Add("✅ تم تعديل بيانات الشاليه بنجاح", Severity.Success);
     }
 
     private async Task HandLeSaveAndCloseAsync()
     {
-
         await _chaletServices.Upsert(chalet);
-
-
-
-        NavigationManager.NavigateTo("/ChaletListComponent");
+        snackbar.Add("✅ تم تعديل بيانات الشاليه بنجاح", Severity.Success);
+        NavigationManager.NavigateTo($"/View/{chalet.OwnerId}");
     }
-
-
-
-
-
-
-
+    public void NavigateToMainPagee()
+    {
+        NavigationManager.NavigateTo($"/View/{chalet.OwnerId}");
+    }
 }

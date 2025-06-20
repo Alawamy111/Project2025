@@ -229,9 +229,6 @@ namespace Project2025.Migrations
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("PropertyOwnerownerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<double>("area")
                         .HasColumnType("float");
 
@@ -244,14 +241,14 @@ namespace Project2025.Migrations
 
                     b.HasKey("ChaletId");
 
-                    b.HasIndex("PropertyOwnerownerId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Chalets");
                 });
 
             modelBuilder.Entity("Project2025.Data.Entity.PropertyOwner", b =>
                 {
-                    b.Property<Guid>("ownerId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -266,7 +263,7 @@ namespace Project2025.Migrations
                     b.Property<int>("phone")
                         .HasColumnType("int");
 
-                    b.HasKey("ownerId");
+                    b.HasKey("Id");
 
                     b.ToTable("PropertyOwners");
                 });
@@ -326,7 +323,7 @@ namespace Project2025.Migrations
                 {
                     b.HasOne("Project2025.Data.Entity.PropertyOwner", "PropertyOwner")
                         .WithMany("Chalets")
-                        .HasForeignKey("PropertyOwnerownerId")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

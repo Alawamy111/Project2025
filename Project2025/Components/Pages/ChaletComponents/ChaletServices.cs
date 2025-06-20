@@ -10,9 +10,7 @@ namespace Project2025.Components.Pages.ChaletComponents
 
         public ChaletServices(IDbContextFactory<ApplicationDbContext> dbContextFactory)
         {
-
             _dbContextFactory = dbContextFactory;
-
         }
 
         public async Task DeleteAsync(Chalet chalet)
@@ -29,15 +27,15 @@ namespace Project2025.Components.Pages.ChaletComponents
         public Task<Chalet?> GetChaletByChaletId(Guid ChaletId)
         {
             var _dbContext = _dbContextFactory.CreateDbContext();
-            return _dbContext.Chalets.FirstOrDefaultAsync(p => p.ChaletId == ChaletId);
-
+            return _dbContext.Chalets
+                .Include(c => c.PropertyOwner) // ✅ جلب بيانات المالك مع الشاليه
+                .FirstOrDefaultAsync(p => p.ChaletId == ChaletId); // ✅ صحيح
         }
 
         public Task<List<Chalet>> GetChalets()
         {
             var _dbContext = _dbContextFactory.CreateDbContext();
             return _dbContext.Chalets.ToListAsync();
-
         }
 
         public async Task<Chalet> Upsert(Chalet chalet)
@@ -46,12 +44,10 @@ namespace Project2025.Components.Pages.ChaletComponents
             var existingOwner = await _dbContext.Chalets.FirstOrDefaultAsync(a => a.ChaletId == chalet.ChaletId);
             if (existingOwner != null)
             {
-             
                 existingOwner.OwnerId = chalet.OwnerId;
                 existingOwner.price = chalet.price;
                 existingOwner.area = chalet.area;
                 existingOwner.location = chalet.location;
-
 
                 _dbContext.Chalets.Update(existingOwner);
             }
@@ -59,11 +55,18 @@ namespace Project2025.Components.Pages.ChaletComponents
             {
                 await _dbContext.Chalets.AddAsync(chalet);
             }
+
             await _dbContext.SaveChangesAsync();
             return chalet;
         }
 
-
-
+        public Task<List<Chalet>> GetChaletsByOwnerId(Guid Id)
+        {
+            var _dbContext = _dbContextFactory.CreateDbContext();
+            return _dbContext.Chalets
+                .Include(c => c.PropertyOwner) // ✅ لضمان عرض اسم المالك
+                .Where(a => a.OwnerId == Id)
+                .ToListAsync();
+        }
     }
 }
