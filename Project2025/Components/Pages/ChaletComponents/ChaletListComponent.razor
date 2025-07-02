@@ -12,7 +12,9 @@
 
 <MudPopoverProvider />
 <MudDialogProvider />
-<MudSnackbarProvider />
+<MudSnackbarProvider MaxDisplayedSnackbars="3"
+                     PreventDuplicates="true"
+                     Position="SnackbarPosition.TopLeft" />
 
 
 
@@ -22,7 +24,7 @@
         <MudButton Color="Color.Primary"
                    Variant="Variant.Filled"
                    StartIcon="@Icons.Material.Filled.Add"
-                   @onclick="NavigateToAddChalet">Add</MudButton>
+                   @onclick="NavigateToAddChalet">Add Chalet</MudButton>
 
 
         <MudButton Color="Color.Secondary"
@@ -65,7 +67,7 @@
             <MudButton Color="Color.Error"
                        Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.Delete"
-                       OnClick="()=>DeleteChalet(context)" />
+                       OnClick="()=>ConfirmDelete(context)" />
 
 
         </MudTd>
@@ -121,6 +123,21 @@ NavigationManager.NavigateTo($"ChaletEdit/{chalet.OwnerId}/ChaletId/{chalet.Chal
         snackbar.Add("🗑️ تم حذف الشاليه بنجاح", Severity.Warning);
         Chalets.Remove(chalet);
        
+    }
+
+    private async Task ConfirmDelete(Chalet chalet)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            title: "تأكيد الحذف",
+            markupMessage: (MarkupString)$" هل أنت متأكد أنك تريد حذف الشلي <b>{chalet.location}</b>؟",
+            yesText: "نعم",
+            noText: "إلغاء"
+        );
+
+        if (result == true)
+        {
+            await DeleteChalet(chalet);
+        }
     }
 
 }

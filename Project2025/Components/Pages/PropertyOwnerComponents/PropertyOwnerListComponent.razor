@@ -14,8 +14,9 @@
 
 <MudPopoverProvider />
 <MudDialogProvider />
-<MudSnackbarProvider />
-
+<MudSnackbarProvider MaxDisplayedSnackbars="3"
+                     PreventDuplicates="true"
+                     Position="SnackbarPosition.TopLeft" />
 
 
 <MudTable Items="PropertyOwners" Hover="true" Loading="@_loading" LoadingProgressColor="Color.Info">
@@ -66,7 +67,7 @@
                 <MudButton Color="Color.Error"
                            Variant="Variant.Filled"
                            StartIcon="@Icons.Material.Filled.Delete"
-                           OnClick="() => DeletePropertyOwner(context)" />
+                           OnClick="() => ConfirmDelete(context)" />
             </MudStack>
         </MudTd>
     </RowTemplate>
@@ -109,5 +110,22 @@
         snackbar.Add("🗑️ تم حذف صاحب العقار", Severity.Warning);
         PropertyOwners.Remove(propertyOwner);
     }
+
+
+    private async Task ConfirmDelete(PropertyOwner propertyOwner)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            title: "تأكيد الحذف",
+            markupMessage: (MarkupString)$"هل أنت متأكد أنك تريد حذف <b>{propertyOwner.ownerName}</b>؟",
+            yesText: "نعم",
+            noText: "إلغاء"
+        );
+
+        if (result == true)
+        {
+            await DeletePropertyOwner(propertyOwner);
+        }
+    }
+
 
 }

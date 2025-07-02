@@ -9,7 +9,6 @@
 @inject ISnackbar snackbar
 
 
-<h1>تعديل شالية</h1>
 
 @if (chalet == null)
 {
@@ -25,7 +24,7 @@ else
                 <MudText Typo="Typo.h5" Align="Align.Center">@PageHeaderText</MudText>
             </MudCardHeader>
 
-            <MudItem xs="12" md="12" lg="12">
+         @*    <MudItem xs="12" md="12" lg="12">
                 <MudTextField @bind-Value="chalet.OwnerId"
                               Label="OwnerID"
                               Variant="Variant.Outlined"
@@ -37,7 +36,7 @@ else
                               Label="ChaletID"
                               Variant="Variant.Outlined"
                               Margin="Margin.Dense" />
-            </MudItem>
+            </MudItem> *@
 
 
             <MudItem xs="12" md="12" lg="12">
