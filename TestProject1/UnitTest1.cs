@@ -17,6 +17,7 @@ namespace TestProject1
 
         private static Microsoft.EntityFrameworkCore.DbContextOptions<ApplicationDbContext> GetDbContextOptions() => new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
+
                 .Options;
 
 
